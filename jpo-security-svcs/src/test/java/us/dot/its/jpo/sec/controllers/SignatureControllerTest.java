@@ -2,8 +2,9 @@ package us.dot.its.jpo.sec.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mockit.Injectable;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ParseException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ class SignatureControllerTest {
     }
 
     @Test
-    void testSign_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, SignatureControllerException {
+    void testSign_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, SignatureControllerException, ParseException {
         // prepare
         setUp();
         uut.setUseCertificates(true);
@@ -82,9 +83,9 @@ class SignatureControllerTest {
         doReturn(mockSSLContext).when(mockSSLContextFactory).getSSLContext(any(), any());
         HttpClient mockHttpClient = mock(HttpClient.class);
         doReturn(mockHttpClient).when(mockHttpClientFactory).getHttpClient(mockSSLContext);
-        HttpResponse mockHttpResponse = mock(HttpResponse.class);
+        ClassicHttpResponse mockHttpResponse = mock(ClassicHttpResponse.class);
         doReturn(mockHttpResponse).when(mockHttpClient).execute(any());
-        org.apache.http.HttpEntity mockHttpEntity = mock(org.apache.http.HttpEntity.class);
+        org.apache.hc.core5.http.HttpEntity mockHttpEntity = mock(org.apache.hc.core5.http.HttpEntity.class);
         doReturn(mockHttpEntity).when(mockHttpResponse).getEntity();
         doReturn("{\"message-signed\":\"test12345\",\"message-expiry\":1}").when(mockHttpEntityStringifier).stringifyHttpEntity(mockHttpEntity);
         Message message = new Message();
@@ -171,9 +172,9 @@ class SignatureControllerTest {
         doReturn(mockSSLContext).when(mockSSLContextFactory).getSSLContext(any(), any());
         HttpClient mockHttpClient = mock(HttpClient.class);
         doReturn(mockHttpClient).when(mockHttpClientFactory).getHttpClient(mockSSLContext);
-        HttpResponse mockHttpResponse = mock(HttpResponse.class);
+        ClassicHttpResponse mockHttpResponse = mock(ClassicHttpResponse.class);
         doReturn(mockHttpResponse).when(mockHttpClient).execute(any());
-        org.apache.http.HttpEntity mockHttpEntity = mock(org.apache.http.HttpEntity.class);
+        org.apache.hc.core5.http.HttpEntity mockHttpEntity = mock(org.apache.hc.core5.http.HttpEntity.class);
         doReturn(mockHttpEntity).when(mockHttpResponse).getEntity();
         doReturn("{\"result\":\"test\"}").when(mockHttpEntityStringifier).stringifyHttpEntity(mockHttpEntity);
         Message message = new Message();

@@ -2,8 +2,8 @@ package us.dot.its.jpo.sec.helpers;
 
 import java.io.IOException;
 
-import org.apache.http.ParseException;
-import org.junit.Test;
+import org.apache.hc.core5.http.ParseException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,7 +18,7 @@ public class HttpEntityStringifierTest {
     @Test
     public void testStringifyHttpEntity() throws ParseException, IOException {
         // prepare
-        org.apache.http.HttpEntity apache_entity = new org.apache.http.entity.StringEntity("test");
+        org.apache.hc.core5.http.HttpEntity apache_entity = new org.apache.hc.core5.http.io.entity.StringEntity("test");
         
         // execute
         String stringified = httpEntityStringifier.stringifyHttpEntity(apache_entity);

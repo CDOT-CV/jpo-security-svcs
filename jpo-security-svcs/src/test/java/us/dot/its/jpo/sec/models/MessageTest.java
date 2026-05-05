@@ -1,6 +1,6 @@
 package us.dot.its.jpo.sec.models;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MessageTest {
 

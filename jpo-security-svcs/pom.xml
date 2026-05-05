@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.3</version>
+		<version>4.0.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -17,13 +17,14 @@
 	<name>jpo-security-svcs</name>
 	<description>JPO ODE Cryptography Module</description>
 	<properties>
+		<httpclient5.version>5.4.4</httpclient5.version>
 		    <java.version>21</java.version>
 		    <jmockit.version>1.49</jmockit.version>
 		    <argLine>-javaagent:${user.home}/.m2/repository/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
 		    <sonar.organization>usdot-jpo-ode-1</sonar.organization>
             <sonar.host.url>https://sonarcloud.io</sonar.host.url>
             <!-- JaCoCo Properties -->
-            <jacoco.version>0.8.11</jacoco.version>
+            <jacoco.version>0.8.14</jacoco.version>
             <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
             <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
             <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -35,7 +36,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,12 +54,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20231013</version>
@@ -69,18 +64,20 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka_2.13</artifactId>
-			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectreactor</groupId>
@@ -118,7 +115,7 @@
                   <version>3.1.2</version>
                 </dependency>
             </dependencies>
-         </plugin>			
+         </plugin>
         <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>

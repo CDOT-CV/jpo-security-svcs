@@ -12,8 +12,8 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.http.ParseException;
-import org.junit.Test;
+import org.apache.hc.core5.http.ParseException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 

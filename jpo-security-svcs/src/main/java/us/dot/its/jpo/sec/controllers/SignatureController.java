@@ -16,10 +16,12 @@
 package us.dot.its.jpo.sec.controllers;
 
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -174,12 +176,8 @@ public class SignatureController implements EnvironmentAware {
 
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setHeader("Content-Type", "application/json");
-            org.apache.http.HttpEntity postEntity;
-            try {
-                postEntity = new org.apache.http.entity.StringEntity(new JSONObject(map).toString());
-            } catch (UnsupportedEncodingException e) {
-                throw new SignatureControllerException("Invalid request body.", HttpStatus.BAD_REQUEST);
-            }
+            org.apache.hc.core5.http.HttpEntity postEntity;
+            postEntity = new org.apache.hc.core5.http.io.entity.StringEntity(new JSONObject(map).toString());
             httpPost.setEntity(postEntity);
 
             HttpResponse response;
@@ -190,11 +188,12 @@ public class SignatureController implements EnvironmentAware {
                 throw new SignatureControllerException("Unable to sign message.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            org.apache.http.HttpEntity responseEntity = response.getEntity();
+            org.apache.hc.core5.http.HttpEntity responseEntity =
+                    ((HttpEntityContainer) response).getEntity();
             String result;
             try {
                 result = httpEntityStringifier.stringifyHttpEntity(responseEntity);
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 logger.error("Unable to read response from external signing service: {}", e.getMessage(), e);
                 throw new SignatureControllerException("Unable to read response from external signing service", HttpStatus.INTERNAL_SERVER_ERROR);
             }

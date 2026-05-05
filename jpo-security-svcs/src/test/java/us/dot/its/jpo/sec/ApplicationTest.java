@@ -1,6 +1,6 @@
 package us.dot.its.jpo.sec;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 
 import mockit.Capturing;
