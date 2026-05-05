@@ -16,12 +16,8 @@
 package us.dot.its.jpo.sec.controllers;
 
 
-import org.apache.hc.core5.http.HttpEntityContainer;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -169,46 +165,28 @@ public class SignatureController implements EnvironmentAware {
                 throw new SignatureControllerException("Unable to connect to external signing service", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            HttpClient httpClient = httpClientFactory.getHttpClient(sslContext);
+            CloseableHttpClient httpClient = httpClientFactory.getHttpClient(sslContext);
             if (httpClient == null) {
                 throw new SignatureControllerException("Unable to connect to external signing service", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setHeader("Content-Type", "application/json");
-            org.apache.hc.core5.http.HttpEntity postEntity;
-            postEntity = new org.apache.hc.core5.http.io.entity.StringEntity(new JSONObject(map).toString());
-            httpPost.setEntity(postEntity);
+            httpPost.setEntity(new org.apache.hc.core5.http.io.entity.StringEntity(new JSONObject(map).toString()));
 
-            HttpResponse response;
-            try {
-                response = httpClient.execute(httpPost);
-            } catch (IOException e) {
-                logger.error("Unable to execute http request: {}", e.getMessage(), e);
-                throw new SignatureControllerException("Unable to sign message.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            org.apache.hc.core5.http.HttpEntity responseEntity =
-                    ((HttpEntityContainer) response).getEntity();
             String result;
             try {
-                result = httpEntityStringifier.stringifyHttpEntity(responseEntity);
-            } catch (IOException | ParseException e) {
-                logger.error("Unable to read response from external signing service: {}", e.getMessage(), e);
-                throw new SignatureControllerException("Unable to read response from external signing service", HttpStatus.INTERNAL_SERVER_ERROR);
+                result = httpClient.execute(httpPost, response ->
+                        httpEntityStringifier.stringifyHttpEntity(response.getEntity()));
+            } catch (IOException e) {
+                logger.error("Unable to execute request or read response from external signing service: {}", e.getMessage(), e);
+                throw new SignatureControllerException("Unable to sign message.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             logger.debug("Raw response from the external service: >>>{}<<<", result);
             if (result == null || result.trim().isEmpty()) {
                 logger.error("Empty or null response received from the external signing service.");
                 throw new SignatureControllerException("External service returned empty or null response", HttpStatus.BAD_GATEWAY);
-            }
-
-            try {
-                EntityUtils.consume(responseEntity);
-            } catch (IOException e) {
-                logger.error("Unable to consume response from external signing service: {}", e.getMessage(), e);
-                throw new SignatureControllerException("Unable to consume response from external signing service", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             result = result.trim();

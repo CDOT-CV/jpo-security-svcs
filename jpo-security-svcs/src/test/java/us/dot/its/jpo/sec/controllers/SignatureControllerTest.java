@@ -1,16 +1,18 @@
 package us.dot.its.jpo.sec.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mockito.Mock;
-import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ import java.security.UnrecoverableKeyException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -72,7 +75,7 @@ class SignatureControllerTest {
     }
 
     @Test
-    void testSign_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, SignatureControllerException, ParseException {
+    void testSign_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, SignatureControllerException, ParseException, ParseException {
         // prepare
         setUp();
         uut.setUseCertificates(true);
@@ -80,13 +83,16 @@ class SignatureControllerTest {
         uut.setCryptoServiceEndpointSignPath("endpoint");
         SSLContext mockSSLContext = mock(SSLContext.class);
         doReturn(mockSSLContext).when(mockSSLContextFactory).getSSLContext(any(), any());
-        HttpClient mockHttpClient = mock(HttpClient.class);
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
         doReturn(mockHttpClient).when(mockHttpClientFactory).getHttpClient(mockSSLContext);
         ClassicHttpResponse mockHttpResponse = mock(ClassicHttpResponse.class);
-        doReturn(mockHttpResponse).when(mockHttpClient).execute(any());
         org.apache.hc.core5.http.HttpEntity mockHttpEntity = mock(org.apache.hc.core5.http.HttpEntity.class);
         doReturn(mockHttpEntity).when(mockHttpResponse).getEntity();
         doReturn("{\"message-signed\":\"test12345\",\"message-expiry\":1}").when(mockHttpEntityStringifier).stringifyHttpEntity(mockHttpEntity);
+        doAnswer(invocation -> {
+            HttpClientResponseHandler<String> responseHandler = invocation.getArgument(1);
+            return responseHandler.handleResponse(mockHttpResponse);
+        }).when(mockHttpClient).execute(any(HttpPost.class), any(HttpClientResponseHandler.class));
         Message message = new Message();
         message.setMsg("test");
 
@@ -110,7 +116,7 @@ class SignatureControllerTest {
         message.setMsg("test");
 
         // execute
-        assertThrows(SignatureControllerException.class , () -> uut.sign(message));
+        assertThrows(SignatureControllerException.class, () -> uut.sign(message));
     }
 
     @Test
@@ -122,7 +128,8 @@ class SignatureControllerTest {
         Message message = new Message();
         message.setMsg("test");
 
-        assertThrows(SignatureControllerException.class , () -> uut.sign(message));
+        // execute
+        assertThrows(SignatureControllerException.class, () -> uut.sign(message));
     }
 
     @Test
@@ -169,13 +176,16 @@ class SignatureControllerTest {
         uut.setCryptoServiceEndpointSignPath("endpoint");
         SSLContext mockSSLContext = mock(SSLContext.class);
         doReturn(mockSSLContext).when(mockSSLContextFactory).getSSLContext(any(), any());
-        HttpClient mockHttpClient = mock(HttpClient.class);
+        CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
         doReturn(mockHttpClient).when(mockHttpClientFactory).getHttpClient(mockSSLContext);
         ClassicHttpResponse mockHttpResponse = mock(ClassicHttpResponse.class);
-        doReturn(mockHttpResponse).when(mockHttpClient).execute(any());
         org.apache.hc.core5.http.HttpEntity mockHttpEntity = mock(org.apache.hc.core5.http.HttpEntity.class);
         doReturn(mockHttpEntity).when(mockHttpResponse).getEntity();
         doReturn("{\"result\":\"test\"}").when(mockHttpEntityStringifier).stringifyHttpEntity(mockHttpEntity);
+        doAnswer(invocation -> {
+            HttpClientResponseHandler<String> responseHandler = invocation.getArgument(1);
+            return responseHandler.handleResponse(mockHttpResponse);
+        }).when(mockHttpClient).execute(any(HttpPost.class), any(HttpClientResponseHandler.class));
         Message message = new Message();
         message.setMsg("test");
 
@@ -198,7 +208,7 @@ class SignatureControllerTest {
         message.setMsg("test");
 
         // execute
-        assertThrows(SignatureControllerException.class,  () -> uut.forwardMessageToExternalService(message));
+        assertThrows(SignatureControllerException.class, () -> uut.forwardMessageToExternalService(message));
     }
 
     @Test
@@ -215,7 +225,7 @@ class SignatureControllerTest {
         message.setMsg("test");
 
         // execute
-        assertThrows(SignatureControllerException.class,  () -> uut.forwardMessageToExternalService(message));
+        assertThrows(SignatureControllerException.class, () -> uut.forwardMessageToExternalService(message));
     }
 
     @Test
