@@ -1,7 +1,7 @@
 package us.dot.its.jpo.sec.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mockit.Injectable;
+import org.mockito.Mock;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ParseException;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,7 @@ class SignatureControllerTest {
     @Mock
     HttpEntityStringifier mockHttpEntityStringifier;
 
-    @Injectable
+    @Mock
     Environment environment;
 
     @InjectMocks
@@ -162,7 +161,7 @@ class SignatureControllerTest {
     }
 
     @Test
-    void testForwardMessageToExternalService_useCertificates_True_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, JSONException, SignatureControllerException {
+    void testForwardMessageToExternalService_useCertificates_True_SUCCESS() throws KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, IOException, JSONException, SignatureControllerException, ParseException {
         // prepare
         setUp();
         uut.setUseCertificates(true);

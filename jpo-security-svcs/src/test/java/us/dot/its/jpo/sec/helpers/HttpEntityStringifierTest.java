@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import mockit.Tested;
+import org.mockito.InjectMocks;
 
 @ExtendWith(MockitoExtension.class)
 public class HttpEntityStringifierTest {
     
-    @Tested
+    @InjectMocks
     HttpEntityStringifier httpEntityStringifier = new HttpEntityStringifier();
 
     @Test

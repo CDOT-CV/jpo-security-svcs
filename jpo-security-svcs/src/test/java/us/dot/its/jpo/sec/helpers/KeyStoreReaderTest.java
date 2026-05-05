@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import mockit.Tested;
+import org.mockito.InjectMocks;
 
 @ExtendWith(MockitoExtension.class)
 public class KeyStoreReaderTest {
 
-    @Tested
+    @InjectMocks
     KeyStoreReader keyStoreReader = new KeyStoreReader();
 
     private void createKeyStoreForTesting() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
