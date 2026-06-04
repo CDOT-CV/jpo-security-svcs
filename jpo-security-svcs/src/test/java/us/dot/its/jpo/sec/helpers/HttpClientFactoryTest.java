@@ -1,16 +1,15 @@
 package us.dot.its.jpo.sec.helpers;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.apache.http.client.HttpClient;
-
-import mockit.Tested;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.mockito.InjectMocks;
 
 @ExtendWith(MockitoExtension.class)
 public class HttpClientFactoryTest {
 
-    @Tested
+    @InjectMocks
     HttpClientFactory httpClientFactory = new HttpClientFactory();
     
     @Test

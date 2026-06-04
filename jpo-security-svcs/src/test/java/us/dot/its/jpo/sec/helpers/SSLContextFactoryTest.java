@@ -1,7 +1,5 @@
 package us.dot.its.jpo.sec.helpers;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -12,17 +10,17 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.http.ParseException;
-import org.junit.Test;
+import org.apache.hc.core5.http.ParseException;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import mockit.Tested;
+import org.mockito.InjectMocks;
 
 @ExtendWith(MockitoExtension.class)
 public class SSLContextFactoryTest {
     
-    @Tested
+    @InjectMocks
     SSLContextFactory sslContextFactory = new SSLContextFactory();
 
     @Test
