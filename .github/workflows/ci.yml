@@ -9,15 +9,11 @@ jobs:
   jpo-security-svcs:
    runs-on: ubuntu-latest
    container:
-    image: 'openjdk:21-jdk-slim-bookworm'
+    image: maven:3.9.9-eclipse-temurin-21
     options: --user root
    steps:
      - name: Checkout ${{ github.event.repository.name }}
-       uses: actions/checkout@v4    
-     - name: Set up Maven
-       uses: stCarolas/setup-maven@v4.5
-       with:
-        maven-version: 3.8.2              
+       uses: actions/checkout@v4
      - name: Build 
        run: |
          cd $GITHUB_WORKSPACE/jpo-security-svcs
