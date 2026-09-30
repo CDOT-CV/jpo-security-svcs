@@ -101,4 +101,4 @@ jobs:
         with:
           sonar-properties-path: /tmp/sonar-scanner.properties
           sonar-token: ${{ secrets.SONAR_TOKEN }}
-          working-dir: $GITHUB_WORKSPACE                 
+          working-dir: .
